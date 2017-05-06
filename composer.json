@@ -1,0 +1,21 @@
+{
+    "name": "epoque/chameleon",
+    "description": "The Core PHP Files for Chameleon Framework",
+    "type": "library",
+    "license": "GPLv2",
+    "authors": [
+        {
+            "name": "not--p",
+            "email": "jason@epoquecorporation.com"
+        }
+    ],
+    "require": {
+        "php": "^5.3.3 || ^7.0",
+        "phpunit/phpunit": "^6.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Epoque\\Chameleon\\": "src/"
+        }
+    }
+}
