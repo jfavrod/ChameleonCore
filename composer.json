@@ -10,6 +10,7 @@
         }
     ],
     "require": {
+        "monolog/monolog": "1.0.*",
         "php": "^5.3.3 || ^7.0",
         "phpunit/phpunit": "^6.1"
     },
