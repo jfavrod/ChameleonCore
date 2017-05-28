@@ -17,10 +17,14 @@ define('SITE_TITLE', 'testing site title');
 
 final class HtmlHeadTest extends TestCase
 {
+    /**
+     * testBeginEndHeadTags
+     *
+     */
 
-    public function testInstantiation()
+    public function testBeginEndHeadTags()
     {
-        $htmlhead = new HtmlHead();
+        $htmlhead = new HtmlHead('testing');
         $headarray = preg_split('/\n/', $htmlhead);
         $this->assertContains('<head>', $headarray);
         $this->assertContains('</head>', $headarray);

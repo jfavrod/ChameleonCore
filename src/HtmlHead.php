@@ -292,6 +292,12 @@ class HtmlHead extends Common
     }
 
      
+    /**
+     * toString
+     *
+     * Get the HtmlHead as an HTML string.
+     */
+
     public function __toString()
     {
         $httpHost = filter_input(INPUT_SERVER, 'HTTP_HOST', FILTER_SANITIZE_URL);
