@@ -203,35 +203,74 @@ class HtmlHead extends Common
         }
     }
 
-     
-    public function __toString()
+
+
+    /**
+     * getDescription
+     *
+     * If there's a description stored in the description array for the
+     * current URI, return it, otherwise return an empty string.
+     *
+     * @return string The description for the current URI or an empty string.
+     */
+
+    private static function getDescription()
     {
-        $requestUri = trim(filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL), '/');
-        $httpHost   = filter_input(INPUT_SERVER, 'HTTP_HOST', FILTER_SANITIZE_URL);
+        if (array_key_exists(self::URI(), self::$description)) {
+            return self::$description[self::URI()];
+        }
+        else {
+            return '';
+        }
+    }
 
-        // MetaData
 
-        $html  = "<meta charset=\"utf-8\">\n";
-        $html .= "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n";
-        $html .= "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n";
-        $html .= '<meta name="description" content="'.self::$description[$requestUri].'">'."\n";
-        $html .= '<meta name="keywords" content="'.self::$keywords[$requestUri].'">'."\n";
-        $html .= "<meta name=\"author\" content=\"\">\n";
-        $html .= '<link rel="alternate" href="http://'.$httpHost.'/'.$requestUri.'" hreflang="en-us" /> '."\n";
+    /**
+     * getKeywords
+     *
+     * If there are keywords stored in the keywords array for the
+     * current URI, return it, otherwise return an empty string.
+     *
+     * @return string The keywords for the current URI or an empty string.
+     */
 
-        
-        // Site/View Title
+    private static function getKeywords()
+    {
+        if (array_key_exists(self::URI(), self::$keywords)) {
+            return self::$keywords[self::URI()];
+        }
+        else {
+            return '';
+        }
+    }
 
-        if (array_key_exists($requestUri, self::$title))
-            $html .= '<title>' . self::$title[$requestUri] . "</title>\n";
-        else
-            $html .= '<title>'.SITE_TITLE."</title>\n";
 
-        
-        // CSS
-        
+    /**
+     * getTitle
+     *
+     * The title tag.
+     *
+     * @returns A title tag either the title stored in $title, or the
+     * configured SITE_TITLE.
+     */
+
+    private static function titleTag()
+    {
+        if (array_key_exists(self::URI(), self::$title)) {
+            return '<title>' . self::$title[self::URI()] . "</title>\n";
+        }
+        else {
+            return '<title>'.SITE_TITLE."</title>\n";
+        }
+    }
+
+
+    private static function cssTags()
+    {
+        $tags = '';
+
         if (self::$bootstrap) {
-            $html .= '<link rel="stylesheet" '.
+            $tags .= '<link rel="stylesheet" '.
                      'href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" '.
                      'integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" '.
                      'crossorigin="anonymous">'."\n";
@@ -239,15 +278,35 @@ class HtmlHead extends Common
 
         if (!empty(self::$globalCss)) {
             foreach (self::$globalCss as $url) {
-                $html .= "<link href=\"$url\" rel=\"stylesheet\">\n";
+                $tags .= "<link href=\"$url\" rel=\"stylesheet\">\n";
             }
         }
         
-        if (array_key_exists($requestUri, self::$css)) {
-            foreach (self::$css[$requestUri] as $css) {
-                $html .= '<link href="'.$css.'" rel="stylesheet">'."\n";
+        if (array_key_exists(self::URI(), self::$css)) {
+            foreach (self::$css[self::URI()] as $css) {
+                $tags .= '<link href="'.$css.'" rel="stylesheet">'."\n";
             }
         }
+
+        return $tags;
+    }
+
+     
+    public function __toString()
+    {
+        $httpHost = filter_input(INPUT_SERVER, 'HTTP_HOST', FILTER_SANITIZE_URL);
+
+        $html  = "<meta charset=\"utf-8\">\n";
+        $html .= "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n";
+        $html .= "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n";
+        $html .= '<meta name="description" content="'.self::getDescription().'">'."\n";
+        $html .= '<meta name="keywords" content="'.self::getKeywords().'">'."\n";
+        $html .= "<meta name=\"author\" content=\"\">\n";
+        $html .= '<link rel="alternate" href="http://'.$httpHost.'/'.self::URI().'" hreflang="en-us" /> '."\n";
+
+        $html .= self::titleTag();
+        $html .= self::cssTags();
+        
 
         return "<head>\n$html</head>\n";
     }
