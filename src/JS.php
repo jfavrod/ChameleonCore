@@ -41,6 +41,15 @@ class JS extends Common implements RouterInterface
     }
 
 
+    /**
+     * tags
+     *
+     * Return appropriate javascript tags for the given source.
+     *
+     * @param $src string|array String for a single javascript tag, an array
+     * for a collection of.
+     */
+
     public static function tags($src)
     {
         $html = '';
@@ -71,7 +80,9 @@ class JS extends Common implements RouterInterface
                     if (is_file(APP_ROOT.JS_DIR . $source)) {
                         $html .= '<script src="' . JS_DIR . $source . '"></script>'."\n";
                     }
-                    else if (is_file($source) || file_get_contents('http:'.$source, False, NULL, 20)) {
+                    else if (is_file($source) ||
+                        is_file(APP_ROOT.$source) || 
+                        file_get_contents('http:'.$source, False, NULL, 20)) {
                         $html .= '<script src="' . $source . '"></script>'."\n";
                     }
                     else {
