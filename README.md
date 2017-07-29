@@ -1,5 +1,5 @@
 # ChameleonCore
 The Core PHP Files for Chameleon Framework
 
-@version 0.1.0
+@version 0.1.1
 

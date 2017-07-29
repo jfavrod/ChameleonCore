@@ -243,10 +243,14 @@ class HtmlHead extends Common
             }
         }
         
+        
         if (array_key_exists($requestUri, self::$css)) {
             foreach (self::$css[$requestUri] as $css) {
                 $html .= '<link href="'.$css.'" rel="stylesheet">'."\n";
             }
+        }
+        else if (is_file(CSS_DIR.$requestUri.'.css') || is_file(APP_ROOT.CSS_DIR.$requestUri.'.css')) {
+            $html .= '<link href="'.CSS_DIR.$requestUri.'.css" rel="stylesheet">';
         }
 
         return "<head>\n$html</head>\n";
