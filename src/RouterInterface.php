@@ -20,7 +20,7 @@ interface RouterInterface
      * @return boolean True if added to routes array, false otherwise.
      */
 
-    public static function addRoute($route=[]);
+    public function addRoute($route=[]);
 
     
     /**
@@ -31,5 +31,5 @@ interface RouterInterface
      * 
      */
 
-    public static function fetchRoute();
+    public function fetchRoute();
 }

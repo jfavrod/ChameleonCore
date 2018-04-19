@@ -10,14 +10,20 @@ namespace Epoque\Chameleon;
 
 class Presenter extends Common implements RouterInterface
 {
-    private static $routes = [];
+    private $routes;
+
+
+    public function __construct()
+    {
+        $this->routes = [];
+    }
     
     
-    public static function addRoute($route=array()) {
+    public function addRoute($route=array()) {
         if ( is_array($route) && !empty($route) && is_string(key($route)) &&
                 ( is_file(current($route)) || is_file(VIEWS_DIR.current($route)) ) )
         {
-            self::$routes[trim(key($route), '/')] = current($route);
+            $this->routes[trim(key($route), '/')] = current($route);
             return true;
         }
         else {
@@ -28,14 +34,14 @@ class Presenter extends Common implements RouterInterface
     }
 
     
-    public static function fetchRoute() {
+    public function fetchRoute() {
         // If the key for a request matches a wildcard return the wildcard route.
-        if (array_key_exists(self::URI(), self::$routes)) {
-            if (is_file(self::$routes[self::URI()])) {
-                include_once self::$routes[self::URI()];
+        if (array_key_exists(self::URI(), $this->routes)) {
+            if (is_file($this->routes[self::URI()])) {
+                include_once $this->routes[self::URI()];
             }
-            else if (is_file(VIEWS_DIR . self::$routes[self::URI()])) {
-                include VIEWS_DIR . self::$routes[self::URI()];
+            else if (is_file(VIEWS_DIR . $this->routes[self::URI()])) {
+                include VIEWS_DIR . $this->routes[self::URI()];
             }
             else {
                 self::logWarning(__METHOD__ . ': could not fetch requested (' +
@@ -63,14 +69,11 @@ class Presenter extends Common implements RouterInterface
     }
 
     
-    private static function wildcardMatch($request)
+    private function wildcardMatch($request)
     {
-        $eReporingPrev = error_reporting();
-        error_reporting(0);
-        
         $r = FALSE;
         
-        foreach (self::$routes as $req => $res) {
+        foreach ($this->routes as $req => $res) {
             $o_res = $res;
             
             if (preg_match('`\*$`', $req)) {
@@ -91,7 +94,6 @@ class Presenter extends Common implements RouterInterface
             }
         }   
         
-        error_reporting($eReporingPrev);
         return $r;
     }
 }

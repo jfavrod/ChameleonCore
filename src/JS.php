@@ -12,12 +12,17 @@ namespace Epoque\Chameleon;
 
 class JS extends Common implements RouterInterface
 {
-    static $BOOTSTRAP = '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>';
-    static $jQuery    = '<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>';
-    static $jQueryUI  = '<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>';
+    private $BOOTSTRAP = '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>';
+    private $jQuery    = '<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>';
+    private $jQueryUI  = '<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>';
     
-    private static $routes = [];
+    private $routes;
 
+
+    public function __construct()
+    {
+        $routes = [];
+    }
 
     /**
      * trio
@@ -26,16 +31,16 @@ class JS extends Common implements RouterInterface
      * Bootstrap JavaScript.
      */
 
-    public static function trio()
+    public function trio()
     {
         $html  = '';
 
         $html .= "<!-- jQuery -->\n";
-        $html .= self::$jQuery . "\n";
+        $html .= $this->jQuery . "\n";
         $html .= "<!-- jQuery-UI -->\n";
-        $html .= self::$jQueryUI . "\n";
+        $html .= $this->jQueryUI . "\n";
         $html .= "<!-- Bootstrap JS -->\n";
-        $html .= self::$BOOTSTRAP . "\n";
+        $html .= $this->BOOTSTRAP . "\n";
 
         print $html;
     }
@@ -50,7 +55,7 @@ class JS extends Common implements RouterInterface
      * for a collection of.
      */
 
-    public static function tags($src)
+    public function tags($src)
     {
         $html = '';
 
@@ -96,14 +101,14 @@ class JS extends Common implements RouterInterface
     }
 
     
-    public static function addRoute($route=[]) {
+    public function addRoute($route=[]) {
         if (is_array($route) && count($route) === 1)
         {
             $req = trim(key($route), '/');
             $res = current($route);
             
             if (is_string($req) && is_string($res)) {
-               self::$routes[$req] = $res;
+               $this->routes[$req] = $res;
             }
             else {
                 self::logError(__METHOD__ . ": invalid route ([$req => $res])");
@@ -115,9 +120,9 @@ class JS extends Common implements RouterInterface
     }
 
         
-    public static function fetchRoute() {
-        if (array_key_exists(self::URI(), self::$routes)) {
-            $js = str_replace(' ', '', self::$routes[self::URI()]);
+    public function fetchRoute() {
+        if (array_key_exists(self::URI(), $this->routes)) {
+            $js = str_replace(' ', '', $this->routes[self::URI()]);
             self::tags(explode(',', $js));
         }
         else if (is_file(APP_ROOT . 'resources/js/' . self::URI() . '.js')) {
@@ -130,9 +135,9 @@ class JS extends Common implements RouterInterface
     }
 
 
-    private static function wildcardMatch()
+    private function wildcardMatch()
     {
-        foreach (self::$routes as $req => $res) {
+        foreach ($this->routes as $req => $res) {
             if (preg_match('`\*$`', $req)) {
                 $req = rtrim($req, '*');
                 $req = rtrim($req, '/');
